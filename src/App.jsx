@@ -45,23 +45,48 @@ const pizzaData = [
 
 function App() {
   return (
-    <main>
-      <h1>Hello React!</h1>
+    <div>
+      <Header />
+      <Menu />
+      <Footer />
+    </div>
+  );
+}
+
+function Header() {
+  return <h1>Fast React Pizza Co.</h1>;
+}
+function Menu() {
+  return (
+    <div>
+      <h2>Our Menu</h2>
       {pizzaData.map((pizza) => (
         <Pizza key={pizza.name} pizza={pizza} />
       ))}
-    </main>
+    </div>
+  );
+}
+
+function Footer() {
+  const hour = new Date().getHours();
+  const openHour = 12;
+  const closeHour = 22;
+  const isOpen = hour >= openHour && hour <= closeHour;
+
+  console.log(isOpen);
+  return (
+    <footer>{new Date().toLocaleTimeString()}. We're currently open!</footer>
   );
 }
 
 function Pizza({ pizza }) {
   return (
-    <article>
-      <h2>{pizza.name}</h2>
-      <img src={`/${pizza.photoName}`} alt={pizza.name} width="200" />
+    <div className="pizza">
+      <img src={pizza.photoName} alt={pizza.name} />
+      <h3>{pizza.name}</h3>
       <p>{pizza.ingredients}</p>
-      <strong>{pizza.soldOut ? "Sold out" : `$${pizza.price}`}</strong>
-    </article>
+      <span>{pizza.soldOut ? "Sold out" : pizza.price}</span>
+    </div>
   );
 }
 
