@@ -1,3 +1,5 @@
+import "./App.css";
+
 const pizzaData = [
   {
     name: "Focaccia",
@@ -45,7 +47,7 @@ const pizzaData = [
 
 function App() {
   return (
-    <div>
+    <div className="app-shell">
       <Header />
       <Menu />
       <Footer />
@@ -54,16 +56,47 @@ function App() {
 }
 
 function Header() {
-  return <h1>Fast React Pizza Co.</h1>;
+  return (
+    <header className="hero">
+      <div className="brand-mark" aria-hidden="true">
+        <span>FR</span>
+      </div>
+      <div>
+        <p className="eyebrow">Since 1987 · Napoli inspired</p>
+        <h1>Fast React Pizza Co.</h1>
+        <p className="hero-copy">
+          Hand-stretched dough, bright ingredients, and pizza worth slowing down
+          for.
+        </p>
+      </div>
+      <div className="hero-badge">
+        Made fresh
+        <br />
+        every day
+      </div>
+    </header>
+  );
 }
 function Menu() {
   return (
-    <div>
-      <h2>Our Menu</h2>
-      {pizzaData.map((pizza) => (
-        <Pizza key={pizza.name} pizza={pizza} />
-      ))}
-    </div>
+    <main className="menu">
+      <div className="menu-heading">
+        <div>
+          <p className="eyebrow">The good stuff</p>
+          <h2>Our menu</h2>
+        </div>
+        <p className="menu-note">
+          Small menu. Big flavor.
+          <br />
+          Always made to order.
+        </p>
+      </div>
+      <div className="pizza-grid">
+        {pizzaData.map((pizza, index) => (
+          <Pizza key={pizza.name} pizza={pizza} index={index} />
+        ))}
+      </div>
+    </main>
   );
 }
 
@@ -71,22 +104,43 @@ function Footer() {
   const hour = new Date().getHours();
   const openHour = 12;
   const closeHour = 22;
-  const isOpen = hour >= openHour && hour <= closeHour;
+  const isOpen = hour >= openHour && hour < closeHour;
 
-  console.log(isOpen);
   return (
-    <footer>{new Date().toLocaleTimeString()}. We're currently open!</footer>
+    <footer className="footer">
+      <span
+        className={`status-dot ${isOpen ? "is-open" : ""}`}
+        aria-hidden="true"
+      />
+      <span>
+        {isOpen ? "We're open until 10 pm" : "We're closed right now"}
+      </span>
+      <span className="footer-divider" aria-hidden="true" />
+      <span>Pickup · Delivery · Good times</span>
+    </footer>
   );
 }
 
-function Pizza({ pizza }) {
+function Pizza({ pizza, index }) {
   return (
-    <div className="pizza">
-      <img src={pizza.photoName} alt={pizza.name} />
-      <h3>{pizza.name}</h3>
-      <p>{pizza.ingredients}</p>
-      <span>{pizza.soldOut ? "Sold out" : pizza.price}</span>
-    </div>
+    <article
+      className={`pizza ${pizza.soldOut ? "sold-out" : ""}`}
+      style={{ "--delay": `${index * 80}ms` }}
+    >
+      <div className="pizza-image-wrap">
+        <img src={`/${pizza.photoName}`} alt={pizza.name} />
+        {pizza.soldOut && <span className="sold-out-label">Sold out</span>}
+      </div>
+      <div className="pizza-content">
+        <div className="pizza-title-row">
+          <h3>{pizza.name.replace("Pizza ", "")}</h3>
+          <span className="price">
+            {pizza.soldOut ? "—" : `$${pizza.price}`}
+          </span>
+        </div>
+        <p>{pizza.ingredients}</p>
+      </div>
+    </article>
   );
 }
 
