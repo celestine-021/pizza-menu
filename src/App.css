@@ -1,10 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 :root {
-  --ink: #17211c;
-  --cream: #f5f1e9;
-  --tomato: #e84b32;
-  --yellow: #f3c64d;
-  --line: rgba(23, 33, 28, 0.18);
+  --ink: #3a2a0a;
+  --cream: #fffdf5;
+  --tomato: #c62828;
+  --yellow: #f5cf4f;
+  --gold: #b48616;
+  --line: rgba(180, 134, 22, 0.35);
 }
 * {
   box-sizing: border-box;
@@ -34,7 +35,7 @@
   text-decoration: none;
 }
 .brand em {
-  color: var(--tomato);
+  color: var(--gold);
   font-style: normal;
 }
 .brand-mark {
@@ -272,16 +273,16 @@ h2 i {
   transform: scale(1.06);
 }
 .pizza-visual.red {
-  background: #f4a08b;
+  background: var(--yellow);
 }
 .pizza-visual.yellow {
-  background: #f0c74a;
+  background: #ffe99a;
 }
 .pizza-visual.orange {
-  background: #f29e5d;
+  background: #f8dc72;
 }
 .pizza-visual.green {
-  background: #a9c07d;
+  background: #fff3b8;
 }
 .mini-pizza {
   border-width: 9px;
@@ -348,15 +349,15 @@ h2 i {
   line-height: 10px;
 }
 .story {
-  background: var(--ink);
-  color: var(--cream);
+  background: var(--yellow);
+  color: var(--ink);
   padding: 105px max(40px, calc((100vw - 1240px) / 2));
 }
 .story h2 {
   margin-bottom: 26px;
 }
 .story h2 i {
-  color: var(--yellow);
+  color: var(--gold);
 }
 .story > p:last-child {
   font-size: 15px;
@@ -366,7 +367,7 @@ h2 i {
 }
 .panel-backdrop {
   align-items: stretch;
-  background: rgba(23, 33, 28, 0.54);
+  background: rgba(58, 42, 10, 0.54);
   display: flex;
   inset: 0;
   justify-content: flex-end;
@@ -585,14 +586,14 @@ h2 i {
 }
 .payment-note {
   align-items: center;
-  background: #dbe8d1;
+  background: #fff3b8;
   display: flex;
   gap: 12px;
   padding: 15px;
 }
 .mpesa-badge {
   align-items: center;
-  background: #35a854;
+  background: var(--gold);
   border-radius: 50%;
   color: white;
   display: flex;
@@ -618,13 +619,49 @@ h2 i {
   z-index: 10;
 }
 .toast.success {
-  background: #278246;
+  background: var(--gold);
 }
 .toast.error {
   background: #a93629;
 }
 .toast.loading {
-  background: var(--ink);
+  background: var(--gold);
+}
+.cart-notification {
+  align-items: center;
+  background: var(--gold);
+  bottom: 25px;
+  box-shadow: 0 8px 25px rgba(58, 42, 10, 0.18);
+  color: white;
+  display: flex;
+  font-size: 13px;
+  gap: 18px;
+  left: 50%;
+  padding: 14px 18px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 9;
+}
+.cart-notification button,
+.sign-out-button {
+  background: var(--tomato);
+  border: 0;
+  color: white;
+  cursor: pointer;
+  font:
+    10px "DM Mono",
+    monospace;
+  padding: 9px 11px;
+  text-transform: uppercase;
+}
+.form-message {
+  color: var(--tomato);
+  font-size: 12px;
+  margin: 0;
+}
+.sign-out-button {
+  align-self: flex-start;
+  margin-top: 22px;
 }
 .toast button {
   background: none;

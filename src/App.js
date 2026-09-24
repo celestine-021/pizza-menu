@@ -54,6 +54,22 @@ function App() {
   const [profile, setProfile] = React.useState("customer");
   const [phone, setPhone] = React.useState("");
   const [customerName, setCustomerName] = React.useState("");
+  const [authUser, setAuthUser] = React.useState(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("crust-user")) || null;
+    } catch {
+      return null;
+    }
+  });
+  const [authMode, setAuthMode] = React.useState("signin");
+  const [authForm, setAuthForm] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [authMessage, setAuthMessage] = React.useState("");
+  const [notification, setNotification] = React.useState("");
+  const [adminOrders, setAdminOrders] = React.useState([]);
   const [orderState, setOrderState] = React.useState({
     status: "idle",
     message: "",
@@ -70,6 +86,89 @@ function App() {
           )
         : [...current, { ...item, quantity: 1 }];
     });
+
+  const addPizza = (item) => {
+    addToCart(item);
+    setNotification(`${item.name} added to your cart`);
+    window.setTimeout(() => setNotification(""), 2600);
+  };
+
+  const submitAuth = async (event) => {
+    event.preventDefault();
+    setAuthMessage("Signing you in...");
+    try {
+      const response = await fetch(
+        `/api/auth/${authMode === "register" ? "register" : "login"}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(authForm),
+        },
+      );
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.message || "Authentication failed.");
+      window.localStorage.setItem("crust-token", result.token);
+      window.localStorage.setItem("crust-user", JSON.stringify(result.user));
+      setAuthUser(result.user);
+      setCustomerName(result.user.name);
+      setAuthMessage("");
+    } catch (error) {
+      setAuthMessage(error.message);
+    }
+  };
+
+  const updateProfile = async (event) => {
+    event.preventDefault();
+    setAuthMessage("Saving profile...");
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${window.localStorage.getItem("crust-token")}`,
+        },
+        body: JSON.stringify({ name: authForm.name, email: authForm.email }),
+      });
+      const result = await response.json();
+      if (!response.ok)
+        throw new Error(result.message || "Unable to save profile.");
+      setAuthUser(result.user);
+      window.localStorage.setItem("crust-user", JSON.stringify(result.user));
+      setAuthMessage("Profile saved.");
+    } catch (error) {
+      setAuthMessage(error.message);
+    }
+  };
+
+  const signOut = () => {
+    window.localStorage.removeItem("crust-token");
+    window.localStorage.removeItem("crust-user");
+    setAuthUser(null);
+    setAuthMessage("");
+  };
+
+  React.useEffect(() => {
+    if (authUser)
+      setAuthForm({ name: authUser.name, email: authUser.email, password: "" });
+  }, [authUser]);
+
+  React.useEffect(() => {
+    if (
+      activePanel !== "profile" ||
+      profile !== "admin" ||
+      authUser?.role !== "admin"
+    )
+      return;
+    fetch("/api/admin/orders", {
+      headers: {
+        Authorization: `Bearer ${window.localStorage.getItem("crust-token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => setAdminOrders(result.orders || []))
+      .catch(() => setAdminOrders([]));
+  }, [activePanel, profile, authUser]);
 
   const changeQuantity = (id, amount) =>
     setCart((current) =>
@@ -205,7 +304,7 @@ function App() {
                   </div>
                   <strong>{formatKes(item.price)}</strong>
                 </div>
-                <button className="add-button" onClick={() => addToCart(item)}>
+                <button className="add-button" onClick={() => addPizza(item)}>
                   Add to cart <span>+</span>
                 </button>
               </article>
@@ -235,6 +334,13 @@ function App() {
           >
             ×
           </button>
+        </div>
+      )}
+
+      {notification && (
+        <div className="cart-notification" role="status">
+          {notification}
+          <button onClick={() => setActivePanel("cart")}>View cart</button>
         </div>
       )}
 
@@ -341,25 +447,137 @@ function App() {
                     Admin
                   </button>
                 </div>
-                {profile === "customer" ? (
+                {!authUser ? (
+                  <>
+                    <div className="profile-tabs">
+                      <button
+                        className={authMode === "signin" ? "selected" : ""}
+                        onClick={() => setAuthMode("signin")}
+                      >
+                        Sign in
+                      </button>
+                      <button
+                        className={authMode === "register" ? "selected" : ""}
+                        onClick={() => setAuthMode("register")}
+                      >
+                        Register
+                      </button>
+                    </div>
+                    <form
+                      className="checkout-form auth-form"
+                      onSubmit={submitAuth}
+                    >
+                      {authMode === "register" && (
+                        <label>
+                          Full name
+                          <input
+                            value={authForm.name}
+                            onChange={(event) =>
+                              setAuthForm({
+                                ...authForm,
+                                name: event.target.value,
+                              })
+                            }
+                            required
+                          />
+                        </label>
+                      )}
+                      <label>
+                        Email
+                        <input
+                          type="email"
+                          value={authForm.email}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              email: event.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        Password
+                        <input
+                          type="password"
+                          value={authForm.password}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              password: event.target.value,
+                            })
+                          }
+                          minLength="6"
+                          required
+                        />
+                      </label>
+                      {authMessage && (
+                        <p className="form-message">{authMessage}</p>
+                      )}
+                      <button className="primary-button full">
+                        {authMode === "register" ? "Create account" : "Sign in"}
+                        <span>↗</span>
+                      </button>
+                    </form>
+                  </>
+                ) : profile === "customer" ? (
                   <div className="profile-content">
-                    <div className="avatar">C</div>
-                    <h3>Guest customer</h3>
-                    <p>
-                      Save your details at checkout for a faster next order.
-                    </p>
-                    <span className="profile-label">Orders</span>
-                    <strong>Ready for your first one</strong>
+                    <div className="avatar">
+                      {authUser.name.charAt(0).toUpperCase()}
+                    </div>
+                    <h3>{authUser.name}</h3>
+                    <p>{authUser.email}</p>
+                    <form className="checkout-form" onSubmit={updateProfile}>
+                      <label>
+                        Name
+                        <input
+                          value={authForm.name}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              name: event.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        Email
+                        <input
+                          type="email"
+                          value={authForm.email}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              email: event.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </label>
+                      {authMessage && (
+                        <p className="form-message">{authMessage}</p>
+                      )}
+                      <button className="primary-button full">
+                        Save profile<span>↗</span>
+                      </button>
+                    </form>
+                    <button className="sign-out-button" onClick={signOut}>
+                      Sign out
+                    </button>
                   </div>
                 ) : (
                   <div className="profile-content admin-profile">
                     <div className="avatar">A</div>
-                    <h3>Crust &amp; Co. Admin</h3>
-                    <p>Kitchen overview and order management.</p>
+                    <h3>{authUser.name}</h3>
+                    <p>{authUser.email} · Admin account</p>
                     <div className="admin-stat">
                       <span>Today</span>
-                      <strong>Orders are stored by the backend.</strong>
+                      <strong>Manage orders from the backend dashboard.</strong>
                     </div>
+                    <button className="sign-out-button" onClick={signOut}>
+                      Sign out
+                    </button>
                   </div>
                 )}
               </>
