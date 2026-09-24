@@ -1,18 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
 :root {
-  --ink: #3a2a0a;
-  --cream: #fffdf5;
-  --tomato: #c62828;
-  --yellow: #f5cf4f;
-  --gold: #b48616;
-  --line: rgba(180, 134, 22, 0.35);
+  --ink: #2c2205;
+  --cream: #fffef9;
+  --white: #ffffff;
+  --yellow: #f7d65d;
+  --gold: #d4a821;
+  --gold-soft: #f7e49b;
+  --panel: #fffef9;
+  --line: rgba(212, 168, 33, 0.34);
+  --red: #d92d2d;
 }
 * {
   box-sizing: border-box;
 }
 .App {
   min-height: 100vh;
-  background: var(--cream);
+  background: linear-gradient(180deg, #fffef9 0%, #fff8d6 100%);
   color: var(--ink);
 }
 .topbar {
@@ -40,15 +43,16 @@
 }
 .brand-mark {
   align-items: center;
-  background: var(--tomato);
+  background: linear-gradient(135deg, var(--yellow), var(--gold));
   border-radius: 50%;
-  color: var(--cream);
+  color: var(--white);
   display: flex;
   font-family: "Playfair Display", serif;
   font-size: 22px;
   height: 32px;
   justify-content: center;
   width: 32px;
+  box-shadow: 0 8px 18px rgba(212, 168, 33, 0.25);
 }
 nav {
   display: flex;
@@ -84,14 +88,15 @@ nav a,
 .cart-button b,
 .count {
   align-items: center;
-  background: var(--tomato);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
   border-radius: 50%;
-  color: white;
+  color: var(--white);
   display: inline-flex;
   font-size: 10px;
   height: 22px;
   justify-content: center;
   width: 22px;
+  box-shadow: 0 8px 16px rgba(212, 168, 33, 0.3);
 }
 .hero {
   align-items: center;
@@ -118,7 +123,7 @@ h2 {
 }
 .hero h1 i,
 h2 i {
-  color: var(--tomato);
+  color: var(--gold);
   font-family: "Playfair Display", serif;
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -131,9 +136,9 @@ h2 i {
 }
 .primary-button {
   align-items: center;
-  background: var(--tomato);
+  background: linear-gradient(135deg, var(--yellow), var(--gold));
   border: 0;
-  color: white;
+  color: var(--white);
   cursor: pointer;
   display: inline-flex;
   font:
@@ -145,13 +150,14 @@ h2 i {
   padding: 17px 18px;
   text-decoration: none;
   text-transform: uppercase;
+  box-shadow: 0 10px 24px rgba(212, 168, 33, 0.25);
   transition:
     transform 0.2s,
-    background 0.2s;
+    box-shadow 0.2s;
 }
 .primary-button:hover {
-  background: #c93d29;
   transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(212, 168, 33, 0.32);
 }
 .primary-button span {
   font-size: 18px;
@@ -163,13 +169,15 @@ h2 i {
 }
 .hero-art {
   align-items: center;
-  background: var(--yellow);
+  background: linear-gradient(180deg, var(--gold-soft), var(--yellow));
   display: flex;
   height: 430px;
   justify-content: center;
   overflow: hidden;
   position: relative;
   transform: rotate(2deg);
+  border: 2px solid rgba(212, 168, 33, 0.4);
+  box-shadow: 0 22px 40px rgba(212, 168, 33, 0.18);
 }
 .hero-art::after {
   background: linear-gradient(90deg, rgba(23, 33, 28, 0.22), transparent 60%);
@@ -184,7 +192,7 @@ h2 i {
   width: 100%;
 }
 .sun {
-  color: var(--tomato);
+  color: var(--gold);
   font-size: 35px;
   position: absolute;
   right: 15%;
@@ -295,8 +303,8 @@ h2 i {
   width: 142px;
 }
 .tag {
-  background: var(--ink);
-  color: #fff;
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
+  color: var(--white);
   font:
     10px "DM Mono",
     monospace;
@@ -328,7 +336,7 @@ h2 i {
   white-space: nowrap;
 }
 .add-button {
-  background: transparent;
+  background: var(--panel);
   border: 1px solid var(--line);
   cursor: pointer;
   display: flex;
@@ -339,19 +347,24 @@ h2 i {
   padding: 13px 10px;
   text-transform: uppercase;
   width: 100%;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 .add-button:hover {
-  background: var(--ink);
-  color: white;
+  background: linear-gradient(135deg, var(--yellow), var(--gold));
+  color: var(--white);
+  transform: translateY(-1px);
 }
 .add-button span {
   font-size: 17px;
   line-height: 10px;
 }
 .story {
-  background: var(--yellow);
+  background: linear-gradient(180deg, #fff9d9 0%, var(--yellow) 100%);
   color: var(--ink);
   padding: 105px max(40px, calc((100vw - 1240px) / 2));
+  border-top: 1px solid rgba(212, 168, 33, 0.35);
 }
 .story h2 {
   margin-bottom: 26px;
@@ -413,7 +426,7 @@ h2 i {
 .remove-button {
   background: none;
   border: 0;
-  color: var(--tomato);
+  color: var(--red);
   cursor: pointer;
   font:
     10px "DM Mono",
@@ -496,7 +509,7 @@ h2 i {
   max-width: 210px;
 }
 .empty-cart a {
-  color: var(--tomato);
+  color: var(--gold);
   font-size: 12px;
   text-transform: uppercase;
 }
@@ -518,7 +531,8 @@ h2 i {
   text-transform: uppercase;
 }
 .profile-tabs button.selected {
-  border-color: var(--tomato);
+  border-color: var(--gold);
+  color: var(--ink);
 }
 .profile-content {
   display: flex;
@@ -526,15 +540,17 @@ h2 i {
 }
 .avatar {
   align-items: center;
-  background: var(--yellow);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
   border-radius: 50%;
   display: flex;
+  color: var(--white);
   font:
     26px "Playfair Display",
     serif;
   height: 72px;
   justify-content: center;
   width: 72px;
+  box-shadow: 0 12px 22px rgba(212, 168, 33, 0.2);
 }
 .profile-content h3 {
   font-size: 20px;
@@ -544,6 +560,65 @@ h2 i {
   font-size: 13px;
   line-height: 1.5;
   margin: 0 0 32px;
+}
+.admin-summary {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 16px 0 18px;
+}
+.admin-summary div {
+  background: linear-gradient(180deg, #fffefb, #fff5bf);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 10px;
+}
+.admin-summary span {
+  color: var(--ink);
+  display: block;
+  font:
+    10px "DM Mono",
+    monospace;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.admin-summary strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+.admin-board {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin: 10px 0 18px;
+  padding: 14px 16px;
+}
+.admin-board h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+.admin-board ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.admin-board li {
+  font-size: 12px;
+  list-style: none;
+  padding-left: 20px;
+  position: relative;
+}
+.admin-board li::before {
+  background: var(--gold);
+  border-radius: 50%;
+  content: "";
+  height: 8px;
+  left: 0;
+  position: absolute;
+  top: 5px;
+  width: 8px;
 }
 .profile-label,
 .admin-stat span {
@@ -574,28 +649,31 @@ h2 i {
   gap: 9px;
   text-transform: uppercase;
 }
-.checkout-form input {
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--ink);
+.checkout-form input,
+.checkout-form textarea {
+  background: rgba(247, 214, 93, 0.12);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   font:
     16px "Space Grotesk",
     sans-serif;
   outline: 0;
-  padding: 9px 0;
+  padding: 10px 12px;
+  resize: vertical;
 }
 .payment-note {
   align-items: center;
-  background: #fff3b8;
+  background: linear-gradient(135deg, var(--gold-soft), #fff6d2);
   display: flex;
   gap: 12px;
   padding: 15px;
+  border: 1px solid rgba(212, 168, 33, 0.35);
 }
 .mpesa-badge {
   align-items: center;
-  background: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
   border-radius: 50%;
-  color: white;
+  color: var(--white);
   display: flex;
   font-weight: bold;
   height: 30px;
@@ -619,17 +697,17 @@ h2 i {
   z-index: 10;
 }
 .toast.success {
-  background: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
 }
 .toast.error {
-  background: #a93629;
+  background: linear-gradient(135deg, var(--red), #a51c1c);
 }
 .toast.loading {
-  background: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
 }
 .cart-notification {
   align-items: center;
-  background: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
   bottom: 25px;
   box-shadow: 0 8px 25px rgba(58, 42, 10, 0.18);
   color: white;
@@ -644,9 +722,9 @@ h2 i {
 }
 .cart-notification button,
 .sign-out-button {
-  background: var(--tomato);
+  background: linear-gradient(135deg, var(--gold), var(--yellow));
   border: 0;
-  color: white;
+  color: var(--white);
   cursor: pointer;
   font:
     10px "DM Mono",
@@ -655,7 +733,7 @@ h2 i {
   text-transform: uppercase;
 }
 .form-message {
-  color: var(--tomato);
+  color: var(--red);
   font-size: 12px;
   margin: 0;
 }
@@ -671,7 +749,7 @@ h2 i {
   font-size: 18px;
   margin-left: 15px;
 }
-+ @media (max-width: 800px) {
+@media (max-width: 800px) {
   .topbar {
     padding: 0 20px;
   }
@@ -716,7 +794,7 @@ h2 i {
     padding: 75px 20px;
   }
 }
-+ @media (max-width: 480px) {
+@media (max-width: 480px) {
   .brand {
     font-size: 12px;
   }

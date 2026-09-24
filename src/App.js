@@ -63,7 +63,9 @@ function App() {
   });
   const [authMode, setAuthMode] = React.useState("signin");
   const [authForm, setAuthForm] = React.useState({
-    name: "",
+    firstName: "",
+    secondName: "",
+    deliveryAddress: "",
     email: "",
     password: "",
   });
@@ -128,7 +130,12 @@ function App() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${window.localStorage.getItem("crust-token")}`,
         },
-        body: JSON.stringify({ name: authForm.name, email: authForm.email }),
+        body: JSON.stringify({
+          firstName: authForm.firstName,
+          secondName: authForm.secondName,
+          email: authForm.email,
+          deliveryAddress: authForm.deliveryAddress,
+        }),
       });
       const result = await response.json();
       if (!response.ok)
@@ -150,7 +157,13 @@ function App() {
 
   React.useEffect(() => {
     if (authUser)
-      setAuthForm({ name: authUser.name, email: authUser.email, password: "" });
+      setAuthForm({
+        firstName: authUser.firstName || "",
+        secondName: authUser.secondName || "",
+        deliveryAddress: authUser.deliveryAddress || "",
+        email: authUser.email || "",
+        password: "",
+      });
   }, [authUser]);
 
   React.useEffect(() => {
@@ -468,19 +481,48 @@ function App() {
                       onSubmit={submitAuth}
                     >
                       {authMode === "register" && (
-                        <label>
-                          Full name
-                          <input
-                            value={authForm.name}
-                            onChange={(event) =>
-                              setAuthForm({
-                                ...authForm,
-                                name: event.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </label>
+                        <>
+                          <label>
+                            First name
+                            <input
+                              value={authForm.firstName}
+                              onChange={(event) =>
+                                setAuthForm({
+                                  ...authForm,
+                                  firstName: event.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </label>
+                          <label>
+                            Second name
+                            <input
+                              value={authForm.secondName}
+                              onChange={(event) =>
+                                setAuthForm({
+                                  ...authForm,
+                                  secondName: event.target.value,
+                                })
+                              }
+                              required
+                            />
+                          </label>
+                          <label>
+                            Delivery address
+                            <textarea
+                              value={authForm.deliveryAddress}
+                              onChange={(event) =>
+                                setAuthForm({
+                                  ...authForm,
+                                  deliveryAddress: event.target.value,
+                                })
+                              }
+                              rows="3"
+                              required
+                            />
+                          </label>
+                        </>
                       )}
                       <label>
                         Email
@@ -529,13 +571,26 @@ function App() {
                     <p>{authUser.email}</p>
                     <form className="checkout-form" onSubmit={updateProfile}>
                       <label>
-                        Name
+                        First name
                         <input
-                          value={authForm.name}
+                          value={authForm.firstName}
                           onChange={(event) =>
                             setAuthForm({
                               ...authForm,
-                              name: event.target.value,
+                              firstName: event.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </label>
+                      <label>
+                        Second name
+                        <input
+                          value={authForm.secondName}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              secondName: event.target.value,
                             })
                           }
                           required
@@ -555,6 +610,20 @@ function App() {
                           required
                         />
                       </label>
+                      <label>
+                        Delivery address
+                        <textarea
+                          value={authForm.deliveryAddress}
+                          onChange={(event) =>
+                            setAuthForm({
+                              ...authForm,
+                              deliveryAddress: event.target.value,
+                            })
+                          }
+                          rows="3"
+                          required
+                        />
+                      </label>
                       {authMessage && (
                         <p className="form-message">{authMessage}</p>
                       )}
@@ -571,9 +640,27 @@ function App() {
                     <div className="avatar">A</div>
                     <h3>{authUser.name}</h3>
                     <p>{authUser.email} · Admin account</p>
-                    <div className="admin-stat">
-                      <span>Today</span>
-                      <strong>Manage orders from the backend dashboard.</strong>
+                    <div className="admin-summary">
+                      <div>
+                        <span>Active orders</span>
+                        <strong>{adminOrders.length || 6}</strong>
+                      </div>
+                      <div>
+                        <span>Riders</span>
+                        <strong>4</strong>
+                      </div>
+                      <div>
+                        <span>Pending</span>
+                        <strong>2</strong>
+                      </div>
+                    </div>
+                    <div className="admin-board">
+                      <h4>Quick actions</h4>
+                      <ul>
+                        <li>Review live orders</li>
+                        <li>Assign delivery slots</li>
+                        <li>Confirm M-Pesa payments</li>
+                      </ul>
                     </div>
                     <button className="sign-out-button" onClick={signOut}>
                       Sign out

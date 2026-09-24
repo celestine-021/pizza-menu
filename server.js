@@ -100,7 +100,10 @@ const hashPassword = (
 const publicUser = (user) => ({
   id: user.id,
   name: user.name,
+  firstName: user.firstName || "",
+  secondName: user.secondName || "",
   email: user.email,
+  deliveryAddress: user.deliveryAddress || "",
   role: user.role,
 });
 const getUser = (req) =>
@@ -114,18 +117,23 @@ const requireUser = (req, res, next) => {
 };
 
 app.post("/api/auth/register", (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, secondName, email, password, deliveryAddress } = req.body;
   const normalizedEmail = String(email || "")
     .trim()
     .toLowerCase();
+  const fullFirstName = String(firstName || "").trim();
+  const fullSecondName = String(secondName || "").trim();
+  const safeDeliveryAddress = String(deliveryAddress || "").trim();
+  const safeName = `${fullFirstName} ${fullSecondName}`.trim();
   if (
-    !name ||
+    !safeName ||
     !/^\S+@\S+\.\S+$/.test(normalizedEmail) ||
-    String(password || "").length < 6
+    String(password || "").length < 6 ||
+    !safeDeliveryAddress
   )
     return res.status(400).json({
       message:
-        "Enter a name, valid email, and password of at least 6 characters.",
+        "Add your first name, second name, valid email, delivery address, and a password at least 6 characters long.",
     });
   if (users.has(normalizedEmail))
     return res
@@ -134,8 +142,11 @@ app.post("/api/auth/register", (req, res) => {
   const credentials = hashPassword(password);
   const user = {
     id: `USR-${Date.now().toString(36).toUpperCase()}`,
-    name: String(name).trim(),
+    name: safeName,
+    firstName: fullFirstName,
+    secondName: fullSecondName,
     email: normalizedEmail,
+    deliveryAddress: safeDeliveryAddress,
     role: "customer",
     ...credentials,
   };
@@ -183,17 +194,28 @@ app.get("/api/auth/me", requireUser, (req, res) =>
 );
 
 app.patch("/api/profile", requireUser, (req, res) => {
-  const { name, email } = req.body;
+  const { firstName, secondName, email, deliveryAddress } = req.body;
   const normalizedEmail = String(email || "")
     .trim()
     .toLowerCase();
-  if (!name || !/^\S+@\S+\.\S+$/.test(normalizedEmail))
-    return res.status(400).json({ message: "Enter a valid name and email." });
+  const safeFirstName = String(firstName || "").trim();
+  const safeSecondName = String(secondName || "").trim();
+  const safeName = `${safeFirstName} ${safeSecondName}`.trim();
+  const safeAddress = String(deliveryAddress || "").trim();
+
+  if (!safeName || !safeAddress || !/^\S+@\S+\.\S+$/.test(normalizedEmail))
+    return res.status(400).json({
+      message:
+        "Enter your first name, second name, delivery address, and email.",
+    });
   if (normalizedEmail !== req.user.email && users.has(normalizedEmail))
     return res.status(409).json({ message: "That email is already in use." });
   users.delete(req.user.email);
-  req.user.name = String(name).trim();
+  req.user.name = safeName;
+  req.user.firstName = safeFirstName;
+  req.user.secondName = safeSecondName;
   req.user.email = normalizedEmail;
+  req.user.deliveryAddress = safeAddress;
   users.set(normalizedEmail, req.user);
   return res.json({ user: publicUser(req.user) });
 });
